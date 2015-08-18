@@ -845,21 +845,16 @@ def get_connection(socket, endpoint, ssh_server=None, ssh_keyfile=None):
                               "Paramiko.  You need to install Paramiko")
 
 
-def load_virtualenv(watcher, py_ver=None):
+def _generic_venv(watcher, py_ver, sitedir, bindir):
+    "Generic virtual environment"
     if not watcher.copy_env:
         raise ValueError('copy_env must be True to to use virtualenv')
 
     if not py_ver:
         py_ver = sys.version.split()[0][:3]
 
-    # XXX Posix scheme - need to add others
-    sitedir = os.path.join(watcher.virtualenv, 'lib', 'python' + py_ver,
-                           'site-packages')
-
     if not os.path.exists(sitedir):
         raise ValueError("%s does not exist" % sitedir)
-
-    bindir = os.path.join(watcher.virtualenv, 'bin')
 
     if os.path.exists(bindir):
         watcher.env['PATH'] = ':'.join([bindir, watcher.env.get('PATH', '')])
@@ -913,6 +908,21 @@ def load_virtualenv(watcher, py_ver=None):
             path = sitedir
 
     watcher.env['PYTHONPATH'] = path
+
+
+def load_virtualenv(watcher, py_ver=None):
+    # XXX Posix scheme - need to add others
+    sitedir = os.path.join(watcher.virtualenv, 'lib', 'python' + py_ver,
+                           'site-packages')
+    bindir = os.path.join(watcher.virtualenv, 'bin')
+    _generic_venv(watcher, py_ver, sitedir, bindir)
+
+
+def load_condaenv(watcher, py_ver=None):
+    # NT scheme - need to add others
+    sitedir = os.path.join(watcher.condaenv, 'Lib', 'site-packages')
+    bindir = os.path.join(watcher.condaenv, 'Scripts')
+    _generic_venv(watcher, py_ver, sitedir, bindir)
 
 
 def create_udp_socket(mcast_addr, mcast_port):
