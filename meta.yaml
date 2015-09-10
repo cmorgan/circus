@@ -1,0 +1,32 @@
+package:
+  name: circus
+  version: "0.12.2"
+
+source:
+  path: ./
+
+
+requirements:
+  build:
+    - python
+    - setuptools
+    - iowait
+    - psutil
+    - pyzmq >=13.1.0
+    - tornado >=3.0
+
+  run:
+    - python
+    - setuptools
+    - iowait
+    - psutil
+    - pyzmq >=13.1.0
+    - tornado >=3.0
+
+test:
+  # Python imports
+  imports:
+    - circus
+    - circus.circusd
+    - circus.stats
+    - circus.circusctl
